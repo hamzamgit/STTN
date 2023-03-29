@@ -137,7 +137,7 @@ class STransformer(nn.Module):
         super(STransformer, self).__init__()
         # Spatial Embedding
         self.adj = adj
-        self.D_S = adj.to('cuda:0')
+        self.D_S = adj.to('mps:0')
 #         self.embed_liner = nn.Linear(adj.shape[0], embed_size)
         
         self.attention = SMultiHeadAttention(embed_size, heads)
@@ -167,15 +167,15 @@ class STransformer(nn.Module):
 #         D_S = D_S.permute(1, 0, 2) #[N, T, C]
         B, N, T, C = query.shape
 #         D_S = self.embed_liner(self.D_S) # [N, C]
-        D_S = get_sinusoid_encoding_table(N, C).to('cuda:0')
+        D_S = get_sinusoid_encoding_table(N, C).to('mps:0')
         D_S = D_S.expand(B, T, N, C) #[B, T, N, C]相当于在第2维复制了T份, 第一维复制B份
         D_S = D_S.permute(0, 2, 1, 3) #[B, N, T, C]
         
         
-        # GCN 部分
+        # GCN
 
 
-        X_G = torch.Tensor(B, N,  0, C).to('cuda:0')
+        X_G = torch.Tensor(B, N,  0, C).to('mps:0')
         self.adj = self.adj.unsqueeze(0).unsqueeze(0)
         self.adj = self.norm_adj(self.adj)
         self.adj = self.adj.squeeze(0).squeeze(0)
@@ -231,8 +231,8 @@ class TTransformer(nn.Module):
         B, N, T, C = query.shape
         
 #         D_T = self.one_hot(t, N, T)                          # temporal embedding选用one-hot方式 或者
-#         D_T = self.temporal_embedding(torch.arange(0, T).to('cuda:0'))    # temporal embedding选用nn.Embedding
-        D_T = get_sinusoid_encoding_table(T, C).to('cuda:0')
+#         D_T = self.temporal_embedding(torch.arange(0, T).to('mps:0'))    # temporal embedding选用nn.Embedding
+        D_T = get_sinusoid_encoding_table(T, C).to('mps:0')
         D_T = D_T.expand(B, N, T, C)
 
 
@@ -330,7 +330,7 @@ class Transformer(nn.Module):
         cheb_K,
         dropout,
         
-        device="cuda:0"
+        device="mps:0"
     ):
         super(Transformer, self).__init__()
         self.encoder = Encoder(

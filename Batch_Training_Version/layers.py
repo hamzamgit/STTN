@@ -4,7 +4,7 @@ import torch
 
 from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
-from utils import scaled_Laplacian, cheb_polynomial
+from lib.utils import scaled_Laplacian, cheb_polynomial
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
@@ -59,7 +59,7 @@ class cheb_conv(nn.Module):
         :param out_channels: int, num of channels in the output sequence
         '''
         super(cheb_conv, self).__init__()
-        self.DEVICE = 'cuda:0'
+        self.DEVICE = 'mps:0'
         self.K = K
         adj = np.array(adj.cpu())
         L_tilde = scaled_Laplacian(adj)

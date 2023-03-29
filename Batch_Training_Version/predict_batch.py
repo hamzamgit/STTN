@@ -17,8 +17,8 @@ import pandas as pd
 
 import sys
 sys.path.append('./lib/')
-from pkl_process import *
-from utils import load_graphdata_channel_my, compute_val_loss_sttn, masked_mape_np, re_normalization, max_min_normalization, re_max_min_normalization
+from lib.pkl_process import *
+from lib.utils import load_graphdata_channel_my, compute_val_loss_sttn, masked_mape_np, re_normalization, max_min_normalization, re_max_min_normalization
 
 from time import time
 import shutil
@@ -142,7 +142,7 @@ if __name__=='__main__':
     num_of_hours, num_of_days, num_of_weeks = 1, 0, 0 ## The same setting as prepareData.py
     
     ### Training Hyparameter
-    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+    DEVICE = "mps:0" if torch.cuda.is_available() else "cpu"
     device = DEVICE
     batch_size = 32
     learning_rate = 0.01

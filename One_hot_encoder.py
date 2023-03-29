@@ -10,28 +10,28 @@ import torch.nn as nn
 
 # 单位矩阵生成one-hot编码，线性层降维
 class One_hot_encoder(nn.Module):
-    def __init__(self, embed_size, time_num = 288):
+    def __init__(self, embed_size, time_num=288):
         super(One_hot_encoder, self).__init__()
-        
+
         self.time_num = time_num
         self.I = nn.Parameter(torch.eye(time_num, time_num, requires_grad=True))
-        self.onehot_Linear = nn.Linear(time_num, embed_size)     # 线性层改变one hot编码维度
+        self.onehot_Linear = nn.Linear(time_num, embed_size)  # 线性层改变one hot编码维度
 
-    def forward(self, i, N = 25, T = 12):
-    
-        if i%self.time_num+T > self.time_num :
-            o1 = self.I[i%self.time_num : , : ]
-            o2 = self.I[0 : (i+T)%self.time_num, : ]
+    def forward(self, i, N=25, T=12):
+
+        if i % self.time_num + T > self.time_num:
+            o1 = self.I[i % self.time_num:, :]
+            o2 = self.I[0: (i + T) % self.time_num, :]
             onehot = torch.cat((o1, o2), 0)
-        else:        
-            onehot = self.I[i%self.time_num: i%self.time_num+T, : ]
-        
-        #onehot = onehot.repeat(N, 1, 1)   
+        else:
+            onehot = self.I[i % self.time_num: i % self.time_num + T, :]
+
+        # onehot = onehot.repeat(N, 1, 1)
         onehot = onehot.expand(N, T, self.time_num)
         onehot = self.onehot_Linear(onehot)
         return onehot
-    
-    
+
+
 '''
 def one_hot_function(i, time_num=288, N=25, T=12):
     
@@ -48,5 +48,3 @@ def one_hot_function(i, time_num=288, N=25, T=12):
     onehot = onehot.expand(N, T, time_num)
     
     return onehot'''
-  
-
